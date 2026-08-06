@@ -44,6 +44,14 @@ Each stage only runs if the previous stage succeeded (`needs:` in the workflow f
 
 All credentials (Docker Hub username/token) are stored in GitHub Actions Secrets and referenced through the `secrets` context — never hardcoded or printed in logs.
 
+## Screenshots
+
+**Pipeline run history — showing a failed lint stage (gate working) followed by successful runs:**
+![Pipeline runs](screenshots/actions-runs.png)
+
+**Deployed app running (served from the Kubernetes pod via `kubectl port-forward`):**
+![Deployed app](screenshots/deployed-app.png)
+
 ## Challenges & Solutions
 
 - **Docker Hub authentication kept failing with a "malformed HTTP Authorization header" error**, even after regenerating the access token multiple times. The token worked perfectly when tested locally with `docker login`, which pointed away from the credentials themselves and toward how they were stored. Added a temporary debug step to the workflow that printed the *length* of each secret (never the value) — this revealed the `DOCKERHUB_USERNAME` secret was 27 characters long instead of the expected 11, meaning extra characters had been pasted into the GitHub secret field at some point. Clearing the field completely and retyping the username manually (rather than pasting) fixed it immediately.
